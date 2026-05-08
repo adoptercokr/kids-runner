@@ -184,6 +184,7 @@ class Obstacle {
         
         this.x = canvas.width;
         let groundY = getGroundY();
+        this.bobOffset = Math.random() * Math.PI * 2; // 각 장애물마다 개별적인 타이밍 부여
         
         if (this.type === 'obsSpike') {
             this.width = 70; this.height = 45;
@@ -198,12 +199,34 @@ class Obstacle {
     }
     
     draw() {
+        ctx.save();
+        
+        // 1. 깜빡임 / 맥박치는 위험 네온 글로우 효과
+        const pulse = Math.abs(Math.sin(frames * 0.15 + this.bobOffset));
+        ctx.shadowColor = "#ff3838"; // 경고의 의미를 담은 강력한 레드 네온
+        ctx.shadowBlur = 5 + pulse * 18; // 5 ~ 23px 사이로 맥박치듯 반짝임
+        
+        // 2. 부드러운 유기적 움직임 연출
+        let offsetY = 0;
+        if (this.type === 'obsBat') {
+            // 박쥐는 위아래로 펄럭이며 비행하는 움직임
+            offsetY = Math.sin(frames * 0.12 + this.bobOffset) * 12;
+        } else if (this.type === 'obsGoblin') {
+            // 고블린은 통통 뛰어오는 리드미컬한 움직임
+            offsetY = Math.abs(Math.sin(frames * 0.15 + this.bobOffset)) * -8;
+        } else if (this.type === 'obsSpike') {
+            // 바닥 가시는 금방이라도 튀어오를 듯 미세하게 진동
+            offsetY = Math.sin(frames * 0.35 + this.bobOffset) * 2.5;
+        }
+        
         if (imagesLoaded === totalImages) {
-            ctx.drawImage(images[this.type], this.x, this.y, this.width, this.height);
+            ctx.drawImage(images[this.type], this.x, this.y + offsetY, this.width, this.height);
         } else {
             ctx.fillStyle = '#2d3436';
-            ctx.fillRect(this.x, this.y, this.width, this.height);
+            ctx.fillRect(this.x, this.y + offsetY, this.width, this.height);
         }
+        
+        ctx.restore();
     }
     
     update() {
@@ -219,18 +242,36 @@ class Item {
         this.x = canvas.width;
         let groundY = getGroundY();
         this.y = groundY - 100 - Math.random() * 60;
+        this.bobOffset = Math.random() * Math.PI * 2; // 개별적인 둥둥 뜨는 리듬 부여
     }
     
     draw() {
+        ctx.save();
+        
+        // 1. 공중에 떠 있는 신비로운 연출 (부드러운 위아래 둥둥 뜨기)
+        const offsetY = Math.sin(frames * 0.08 + this.bobOffset) * 8;
+        
+        // 2. 신비롭게 반짝이는 이펙트 (네온 펄싱 효과)
+        const pulse = Math.abs(Math.sin(frames * 0.1 + this.bobOffset));
+        if (this.type === 'itemShield') {
+            ctx.shadowColor = '#00ecff'; // 시원한 사이언/블루 보호막 글로우
+            ctx.shadowBlur = 8 + pulse * 14;
+        } else {
+            ctx.shadowColor = '#ffd32a'; // 따뜻한 황금빛 골드 글로우
+            ctx.shadowBlur = 8 + pulse * 14;
+        }
+        
         if (imagesLoaded === totalImages) {
             const img = this.type === 'itemShield' ? images.itemShield : images.itemCoin;
-            ctx.drawImage(img, this.x - this.radius, this.y - this.radius, this.radius*2, this.radius*2);
+            ctx.drawImage(img, this.x - this.radius, this.y - this.radius + offsetY, this.radius*2, this.radius*2);
         } else {
             ctx.fillStyle = this.type === 'itemShield' ? '#3498db' : '#f1c40f';
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+            ctx.arc(this.x, this.y + offsetY, this.radius, 0, Math.PI*2);
             ctx.fill();
         }
+        
+        ctx.restore();
     }
     
     update() {

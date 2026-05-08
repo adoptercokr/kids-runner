@@ -47,8 +47,8 @@ canvas {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(5px);
+    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('assets/slices/runer-bg.jpg') no-repeat center center/cover;
+    backdrop-filter: blur(2px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -57,16 +57,26 @@ canvas {
     z-index: 10;
 }
 
+.screen p {
+    color: #f1f2f6;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 25px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
 .hidden {
     display: none !important;
 }
 
 h1 {
-    color: #ff6b6b;
-    font-size: 3rem;
+    color: #ffffff;
+    font-size: 3.5rem;
     margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    text-shadow: 0 4px 15px rgba(0,0,0,0.8), 0 0 30px rgba(255,107,107,0.6);
     text-align: center;
+    font-weight: 800;
+    letter-spacing: -1px;
 }
 
 button {
