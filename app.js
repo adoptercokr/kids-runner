@@ -73,9 +73,19 @@ const SoundEngine = {
 function resizeCanvas() {
     canvas.width = canvas.parentElement.clientWidth;
     canvas.height = canvas.parentElement.clientHeight;
+    
+    // Optimize player size and position for mobile/small viewports
+    const isSmallScreen = (canvas.width < 600 || canvas.height < 500);
+    if (isSmallScreen) {
+        player.width = 50;
+        player.height = 60;
+        player.x = canvas.width < 500 ? 20 : 40; // Move character further left on narrow screens to increase reaction time
+    } else {
+        player.width = 80;
+        player.height = 95;
+        player.x = 50;
+    }
 }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
 
 const ASSETS = {
     bgSky: 'assets/slices/bg_sky.png',
@@ -172,6 +182,9 @@ const player = {
     }
 };
 
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
 let obstacles = [];
 let items = [];
 
@@ -186,14 +199,18 @@ class Obstacle {
         let groundY = getGroundY();
         this.bobOffset = Math.random() * Math.PI * 2; // 각 장애물마다 개별적인 타이밍 부여
         
+        const isSmall = (canvas.width < 600 || canvas.height < 500);
         if (this.type === 'obsSpike') {
-            this.width = 70; this.height = 45;
-            this.y = groundY - this.height + 5;
+            this.width = isSmall ? 45 : 70; 
+            this.height = isSmall ? 30 : 45;
+            this.y = groundY - this.height + 3;
         } else if (this.type === 'obsBat') {
-            this.width = 60; this.height = 50;
-            this.y = groundY - 140 - Math.random() * 50; 
+            this.width = isSmall ? 40 : 60; 
+            this.height = isSmall ? 35 : 50;
+            this.y = groundY - (isSmall ? 90 : 140) - Math.random() * (isSmall ? 30 : 50); 
         } else { // goblin
-            this.width = 65; this.height = 80;
+            this.width = isSmall ? 45 : 65; 
+            this.height = isSmall ? 55 : 80;
             this.y = groundY - this.height;
         }
     }
@@ -238,10 +255,11 @@ class Obstacle {
 class Item {
     constructor() {
         this.type = Math.random() < 0.15 ? 'itemShield' : 'itemCoin'; 
-        this.radius = 20;
+        const isSmall = (canvas.width < 600 || canvas.height < 500);
+        this.radius = isSmall ? 13 : 20;
         this.x = canvas.width;
         let groundY = getGroundY();
-        this.y = groundY - 100 - Math.random() * 60;
+        this.y = groundY - (isSmall ? 65 : 100) - Math.random() * (isSmall ? 40 : 60);
         this.bobOffset = Math.random() * Math.PI * 2; // 개별적인 둥둥 뜨는 리듬 부여
     }
     
@@ -393,7 +411,9 @@ function update() {
     
     if (isPlaying) checkCollisions();
     
-    if (frames > 0 && frames % 350 === 0) gameSpeed += 0.5;
+    if (frames > 0 && frames % 350 === 0) {
+        gameSpeed += (canvas.width < 500) ? 0.35 : 0.5;
+    }
     
     frames++;
     if (isPlaying) {
@@ -410,7 +430,7 @@ function startGame() {
     items = [];
     score = 0;
     frames = 0;
-    gameSpeed = 5.5;
+    gameSpeed = (canvas.width < 500) ? 4.5 : 5.5;
     
     bgX_sky = 0;
     bgX_city = 0;

@@ -136,3 +136,49 @@ button:disabled {
     color: #fff;
     text-shadow: 2px 2px 0 #000;
 }
+
+/* Mobile fullscreen optimizations - Removes black bars and scales UI */
+@media (max-width: 768px) {
+    #game-container {
+        max-width: none;
+        max-height: none;
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    
+    body {
+        padding: 0;
+        margin: 0;
+    }
+    
+    h1 {
+        font-size: 2.2rem;
+        margin-bottom: 12px;
+        text-shadow: 0 3px 10px rgba(0,0,0,0.8);
+    }
+    
+    .screen p {
+        font-size: 1.0rem;
+        margin-bottom: 15px;
+    }
+    
+    button {
+        padding: 12px 30px;
+        font-size: 1.2rem;
+        margin-top: 10px;
+        border-radius: 25px;
+    }
+    
+    #hud {
+        top: 15px;
+        left: 15px;
+        font-size: 1.4rem;
+    }
+    
+    .face-upload-container {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+}
